@@ -1,4 +1,4 @@
-import { EntityManager } from "typeorm";
+import { EntityManager, Repository } from "typeorm";
 import express, { Router } from 'express';
 import bodyParser from "body-parser";
 import { UserModel } from "../Models/UserModel";
@@ -17,12 +17,12 @@ export const BASE_ROUTE = '/users'
 
 
 function validateUsername(username: string): boolean {
-    return Boolean(username) && username.length >= 4
+    return username !== null && username.length >= 4
 }
 
 function validatePassword(password: string): boolean {
     // TODO: improve validation
-    return Boolean(password) && password.length >= 4
+    return password !== null && password.length >= 4
 }
 
 function getExpiration(minutes: number): number {
@@ -47,7 +47,7 @@ function getToken(user: UserModel): string {
 ROUTER.use(express.json())
 
 
-export async function isTokenValid(token: string, db: EntityManager): Promise<boolean> {
+export async function isTokenValid(token: string, db: Repository<UserModel>): Promise<boolean> {
     if (token.length !== 275)
         return false
 
@@ -78,19 +78,22 @@ export async function isTokenValid(token: string, db: EntityManager): Promise<bo
 
     
 }
-export function init(db: EntityManager){
-    ROUTER.post('/register', async (req, res) => {        
+
+export function init(db: Repository<UserModel>){
+    ROUTER.post('/register', async (req, res) => {     
+        console.log(req.body)
+           
         const email = req.body.email
         const username = req.body.username
         const password = req.body.password
         
-        //console.log(`Received for registration ${email}<=>${username}<=>${password}`)
+        console.log(`Received for registration ${email}<=>${username}<=>${password}`)
         
         // validate
-        if (! (email && username && password && 
+        if (!email || !username || !password ||
             EMAIL_REGEX.test(email) &&
-            validateUsername(username) &&
-            validatePassword(password)) ){
+            !validateUsername(username) ||
+            !validatePassword(password) ){
                 res.send({
                     success: false,
                     message: 'Unable to validate email, username (length >= 4) or password (length >= 4)'

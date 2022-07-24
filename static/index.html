@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>RTChat</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- <link href="css/style.css" rel="stylesheet"> -->
+    </head>
+    <body>
+        <div class="app-container">
+            <div class="register-container">
+                <label for="email">Email</label>
+                <input type="email" name="email" value="" placeholder="Email">
+                <label for="username">Username</label>
+                <input type="text" name="username" value="" placeholder="Username">
+                <label for="password">Password</label>
+                <input type="password" name="password" value="" placeholder="Password">
+                <button type="submit" onclick='register()'>Register</button>
+            </div>
+            <p></p>
+            <div class="login-container">
+                <label for="username">Username</label>
+                <input type="text" name="username" value="" placeholder="Username">
+                <label for="password">Password</label>
+                <input type="password" name="password" value="" placeholder="Password">
+                <button type="submit" onclick="login()">Login</button>
+            </div>
+        </div>
+
+        <script async src="./js/index.js"></script>
+    </body>
+</html>

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, EntityManager } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, EntityManager, Repository } from "typeorm"
 import bcrypt from 'bcrypt'
 
 const SALT_ROUNDS = 10
@@ -38,7 +38,7 @@ export class UserModel {
         return await bcrypt.compare(password, this.PasswordHash)
     }
 
-    public static async CreateUser(email: string, username: string, password: string, dbManager: EntityManager): Promise<UserModel | null> {
+    public static async CreateUser(email: string, username: string, password: string, dbManager: Repository<UserModel>): Promise<UserModel | null> {
         // values validated in UserRouter
         
         const passwordHash = await bcrypt.hash(password, SALT_ROUNDS)

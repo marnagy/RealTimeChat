@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { DataSource, EntityManager } from "typeorm";
+import { DataSource, EntityManager, Repository } from "typeorm";
 import { UserModel } from "./Models/UserModel";
 import userRouter from "./Routes/UserRouter";
 
@@ -18,7 +18,7 @@ const corsOptions = {
     origin: `http://${HOSTNAME}:${PORT}`
 }
 
-async function isAuthorized(auth: string | undefined, db: EntityManager): Promise<boolean> {
+async function isAuthorized(auth: string | undefined, db: Repository<UserModel>): Promise<boolean> {
     if (!auth){
         return false
     }
@@ -56,9 +56,11 @@ async function main() {
     const app = express()
     app.use(cors(corsOptions))
 
+    app.use(express.static('./static'))
+
     // add UserRouter
     {
-        userRouter.init(DBSource.manager)
+        userRouter.init(DBSource.getRepository(UserModel))
         // add endpoint for register/login
         const uRouter = userRouter.getRouter()
         if (uRouter === null)
@@ -74,7 +76,7 @@ async function main() {
     })
 
     app.get('/api/validated', async (req, resp) => {
-        if (!await isAuthorized(req.headers.authorization, DBSource.manager)){
+        if (!await isAuthorized(req.headers.authorization, DBSource.getRepository(UserModel))){
             resp.status(400).send({
                 success: false
             })
